@@ -118,53 +118,64 @@ input {
 
 <script>
 async function send() {
-    const input = document.getElementById("userInput").value.trim();
-    
-    // Validate input
-    if (!input) {
-        alert("Please enter a message");
-        return;
-    }
-    
+    const inputField = document.getElementById("userInput");
+    const input = inputField.value.trim();
+
+    if (!input) return;
+
+    const chatDiv = document.getElementById("chat");
+
+    // Message utilisateur
+    const userMsg = document.createElement("p");
+    userMsg.className = "chat-message";
+    userMsg.innerHTML = "<b>You:</b> ";
+    userMsg.appendChild(document.createTextNode(input));
+    chatDiv.appendChild(userMsg);
+
+    // Indicateur de chargement
+    const loading = document.createElement("p");
+    loading.className = "chat-message";
+    loading.innerHTML = "<b>Bot:</b> typing...";
+    chatDiv.appendChild(loading);
+
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+
+    inputField.value = "";
+
     try {
-        // Send message to backend
         const res = await fetch("/chat", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({message: input})
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: input
+            })
         });
-        
-        // Check for server errors
-        if (!res.ok) {
-            throw new Error(`Server error: ${res.status}`);
-        }
-        
+
         const data = await res.json();
-        
-        // Safely add user message to chat
-        const chatDiv = document.getElementById("chat");
-        
-        const userMsg = document.createElement("p");
-        userMsg.className = "chat-message";
-        userMsg.innerHTML = "<b>You:</b> ";
-        userMsg.appendChild(document.createTextNode(input));
-        chatDiv.appendChild(userMsg);
-        
-        // Safely add bot message to chat
+
+        loading.remove();
+
         const botMsg = document.createElement("p");
         botMsg.className = "chat-message";
         botMsg.innerHTML = "<b>Bot:</b> ";
-        botMsg.appendChild(document.createTextNode(data.reply || "No response"));
+        botMsg.appendChild(
+            document.createTextNode(data.reply || "No response")
+        );
+
         chatDiv.appendChild(botMsg);
-        
-        // Clear input field and auto-scroll to bottom
-        document.getElementById("userInput").value = "";
-        chatDiv.scrollTop = chatDiv.scrollHeight;
-        
+
     } catch (error) {
-        console.error("Error:", error);
-        alert("Failed to send message: " + error.message);
+        loading.remove();
+
+        const errorMsg = document.createElement("p");
+        errorMsg.className = "chat-message";
+        errorMsg.innerHTML = "<b>Error:</b> Failed to connect.";
+        chatDiv.appendChild(errorMsg);
     }
+
+    chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
 // Allow sending message with Enter key
