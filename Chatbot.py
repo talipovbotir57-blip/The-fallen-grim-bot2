@@ -62,6 +62,7 @@ button:hover {
 
 #chat {
     max-height: 200px;
+    min-height: 250px;
     overflow-y: auto;
     text-align: left;
     margin-bottom: 10px;
@@ -71,7 +72,10 @@ button:hover {
 }
 
 .chat-message {
+    padding: 10px;
+    border-radius: 12px;
     margin: 8px 0;
+    background: rgba(255,255,255,0.05);
     word-wrap: break-word;
 }
 
