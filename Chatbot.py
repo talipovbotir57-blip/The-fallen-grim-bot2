@@ -33,14 +33,6 @@ def get_config():
         'PORT': int(os.getenv('PORT', 5000))
     }
     
-    # Validate required credentials
-    required_keys = ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_PHONE_NUMBER']
-    missing = [key for key in required_keys if not config[key]]
-    
-    if missing:
-        logger.error(f"Missing required environment variables: {missing}")
-        raise ValueError(f"Missing required environment variables: {missing}")
-    
     return config
 
 try:
